@@ -5,21 +5,15 @@ import {
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import notify from '../utilities/toast';
-import Marketplace from '../pages/index';
 import NavBar from './NavBar';
-import Page404 from '../pages/404';
-import Activation from '../pages/activation';
 import AuthContext, { MobileContext, ModalContext, ScrollContext } from './Context';
-import routes, { catalogPages } from '../routes';
+import routes from '../routes';
 import { useAppDispatch, useAppSelector } from '../utilities/hooks';
 import type { ModalShowType, ModalCloseType } from '../types/Modal';
 import { fetchTokenStorage, removeToken, updateTokens } from '../slices/loginSlice';
 import {
   ModalLogin, ModalSignup, ModalRecovery, ModalCreateItem,
 } from './Modals';
-import Search from '../pages/search';
-import Delivery from '../pages/delivery';
-import MyProfile from '../pages/profile';
 
 const App = ({ children, isMob }: { children: JSX.Element, isMob: boolean }) => {
   const { t } = useTranslation();

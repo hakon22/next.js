@@ -13,8 +13,8 @@ export interface UserModel
   phone: string;
   role: string;
   refresh_token: string[] | null;
-  code_activation: number;
-  change_email_code?: number;
+  code_activation?: string | null;
+  change_email_code?: string;
   addresses: Addresses;
   orders: number[];
   createdAt?: string;
@@ -56,10 +56,10 @@ const Users = db.define<UserModel>(
       type: DataTypes.ARRAY(DataTypes.TEXT),
     },
     code_activation: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     change_email_code: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     addresses: {
       type: DataTypes.JSON,

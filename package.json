@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "server": "cross-env DB='LOCAL' ts-node --project tsconfig.server.json server/server.ts",
-    "dev": "start http://192.168.1.111:3000/marketplace && next dev -H 192.168.1.111",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

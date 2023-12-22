@@ -7,13 +7,14 @@ import InputMask from 'react-input-mask';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toLower, capitalize } from 'lodash';
+import type { ModalProps } from '@/types/Modal';
 import notify from '../../utilities/toast';
 import { signupValidation } from '../../validations/validations';
 import formClass from '../../utilities/formClass';
 import routes from '../../routes';
 import textFieldGen from '../../utilities/textFieldGen';
 
-const SignupForm = () => {
+const SignupForm = ({ onHide }: ModalProps) => {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -33,6 +34,7 @@ const SignupForm = () => {
         const { data: { code, id, errorsFields } } = await axios.post(routes.signup, values);
         if (code === 1) {
           router.push(`${routes.activationUrlPage}${id}`);
+          onHide();
         } else if (code === 2) {
           setSubmitting(false);
           errorsFields.forEach((field: 'email' | 'phone') => {

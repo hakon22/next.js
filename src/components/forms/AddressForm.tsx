@@ -131,7 +131,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.city ?? '')}
+                {typeof formik.errors.city === 'string' && t(formik.errors.city)}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className={formClass('street', 'mb-3 position-relative w-100', formik)} controlId="street">
@@ -152,7 +152,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.street ?? '')}
+                {typeof formik.errors.street === 'string' && t(formik.errors.street)}
               </Form.Control.Feedback>
             </Form.Group>
           </div>
@@ -175,7 +175,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.house ?? '')}
+                {typeof formik.errors.house === 'string' && t(formik.errors.house)}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className={formClass('building', 'mb-3', formik)} controlId="building">
@@ -193,7 +193,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.building ?? '')}
+                {typeof formik.errors.building === 'string' && t(formik.errors.building)}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className={formClass('frontDoor', 'mb-3', formik)} controlId="frontDoor">
@@ -211,7 +211,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.frontDoor ?? '')}
+                {typeof formik.errors.frontDoor === 'string' && t(formik.errors.frontDoor)}
               </Form.Control.Feedback>
             </Form.Group>
           </div>
@@ -231,7 +231,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.intercom ?? '')}
+                {typeof formik.errors.intercom === 'string' && t(formik.errors.intercom)}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className={formClass('floor', 'mb-3', formik)} controlId="floor">
@@ -249,7 +249,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.floor ?? '')}
+                {typeof formik.errors.floor === 'string' && t(formik.errors.floor)}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className={formClass('apartment', 'mb-3', formik)} controlId="apartment">
@@ -267,7 +267,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
                 autoComplete="on"
               />
               <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-                {t(formik.errors.apartment ?? '')}
+                {typeof formik.errors.apartment === 'string' && t(formik.errors.apartment)}
               </Form.Control.Feedback>
             </Form.Group>
           </div>
@@ -287,7 +287,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
               autoComplete="on"
             />
             <Form.Control.Feedback type="invalid" tooltip className="anim-show">
-              {t(formik.errors.comment ?? '')}
+              {typeof formik.errors.comment === 'string' && t(formik.errors.comment)}
             </Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex gap-2">
@@ -321,7 +321,7 @@ const AddressForm = ({ user, setLoading }: ProfileFormsProps) => {
             </Button>
           </div>
         </Form>
-      ) : <Button variant="warning" onClick={() => setIsAddingAddress(true)}>Добавить адрес</Button>}
+      ) : <Button variant="warning" onClick={() => setIsAddingAddress(true)}>{t('profile.addressForm.addAddress')}</Button>}
     </div>
   );
 };

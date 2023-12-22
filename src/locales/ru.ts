@@ -246,6 +246,7 @@ export default {
       },
       addressForm: {
         myAddresses: 'Мои адреса:',
+        addAddress: 'Добавить адрес',
         requiredField: '* ',
         adding: 'Добавить',
         updating: 'Обновить',
@@ -266,4 +267,4 @@ export default {
       },
     },
   },
-};
+} as const;

@@ -10,14 +10,14 @@ type RecoveryPassword = (
 type ChangeEmail = (
   username: string,
   email: string,
-  code: number,
+  code: string,
 ) => Promise<void>;
 
 type ActivationAccount = (
   id: number | undefined,
   username: string,
   email: string,
-  code: number,
+  code: string,
 ) => Promise<void>;
 
 const protocol = 'https://';

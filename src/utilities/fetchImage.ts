@@ -6,4 +6,11 @@ const fetchImage = async (img: string, setState?: React.Dispatch<React.SetStateA
   return setState ? setState(`${process.env.PUBLIC_URL}/_next/static/media/${img}`) : `${process.env.PUBLIC_URL}/_next/static/media/${img}`;
 };
 
+export const fetchingItemsImage = async <T extends { image: string }> (items: T[]) => {
+  const values = Object.values<T>(items)
+    .map(async (item) => ({ ...item, image: await fetchImage(item.image) }));
+  const fetchedItems = await Promise.all(values);
+  return fetchedItems;
+};
+
 export default fetchImage;

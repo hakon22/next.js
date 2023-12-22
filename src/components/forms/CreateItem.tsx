@@ -23,7 +23,6 @@ import formClass from '../../utilities/formClass';
 import { MobileContext } from '../Context';
 import routes from '../../routes';
 import { SetContext } from '../CardContextMenu';
-import fetchImage from '../../utilities/fetchImage';
 
 interface Option {
   value: string;
@@ -44,7 +43,12 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
 
   const uploadRef = useRef<HTMLDivElement>(null);
   const [isDiscount, setIsDiscount] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>();
+  const [fileList, setFileList] = useState<UploadFile[]>(item ? [{
+    uid: '-1',
+    name: item.image,
+    status: 'done',
+    url: item.image,
+  }] : []);
 
   const units: string[] = ['kg', 'gr', 'ea'];
 
@@ -194,19 +198,6 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
     }
   }, [formik.errors.image, formik.submitCount]);
 
-  useEffect(() => {
-    if (item) {
-      fetchImage(item.image).then((image) => {
-        setFileList([{
-          uid: '-1',
-          name: item.image,
-          status: 'done',
-          url: image,
-        }]);
-      }).catch((e) => console.log(e));
-    }
-  }, []);
-
   return (
     <div className="marketplace d-flex justify-content-center">
       <Form onSubmit={formik.handleSubmit} className="col-12">
@@ -229,8 +220,7 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
                 onChange={({ fileList: newFileList }) => {
                   setFileList(newFileList);
                 }}
-                onRemove={(e) => {
-                  console.log(e);
+                onRemove={() => {
                   formik.setFieldValue('image', '');
                 }}
                 beforeUpload={(file) => {

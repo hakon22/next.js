@@ -19,7 +19,7 @@ const Breadcrumb = () => {
   const helmet = breadcrumbs[breadcrumbs.length - 1]?.helmet;
 
   useEffect(() => {
-    const pathArray = pathname.slice(1).split('/');
+    const pathArray = pathname.slice(1).split('/').slice(1);
     const linkArray: string[] = [];
 
     setBreadcrumbs(pathArray.map((folder, index) => {
@@ -43,7 +43,7 @@ const Breadcrumb = () => {
           helmet: page,
         };
       }
-      const link = linkArray.reduce((acc, fold) => `${acc}/${fold}`, '');
+      const link = linkArray.reduce((acc, fold) => `${acc}/${fold}`, '/catalog');
       const page = t(`navBar.menu.${folder}`);
       return {
         title: <Link href={link}>{page}</Link>,

@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  // output: 'export',
+  // distDir: 'build',
   basePath: '/marketplace',
   transpilePackages: [
     'rc-util',
@@ -11,14 +13,7 @@ const nextConfig = {
     '@ant-design/icons',
     '@ant-design/icons-svg',
   ],
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://192.168.1.111:3007/marketplace/api/:path*', // Proxy to Backend
-      },
-    ];
-  },
+  reactStrictMode: false,
 };
 
 export default nextConfig;

@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-closing-tag-location */
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Image, Button } from 'react-bootstrap';
+// import { useRouter } from 'next/router';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { AutoComplete } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { toLower } from 'lodash';
-import { Button } from 'react-bootstrap';
-import fetchImage from '../utilities/fetchImage';
+import { paramsCheck } from './Pagination';
 import { useAppDispatch } from '../utilities/hooks';
 import { searchUpdate } from '../slices/marketSlice';
 import routes from '../routes';
@@ -40,7 +41,9 @@ const Search = ({ items }: { items: Item[] }) => {
         return toLower(name).includes(query) || toLower(composition).includes(query);
       });
       if (result.length) {
-        actions(result, `/?q=${searchedValue}&page=${urlPage}`);
+        const lastPage = Math.ceil(result.length / 8);
+        const actualPage = paramsCheck(urlPage, lastPage);
+        actions(result, `/?q=${searchedValue}&page=${actualPage}`);
       } else {
         actions(null, `/search?q=${searchedValue}`);
       }
@@ -50,17 +53,14 @@ const Search = ({ items }: { items: Item[] }) => {
   };
 
   const onSearch = async (q: string) => {
-    const images: string[] = [];
-    const result = items.filter(({ name, composition, image }) => {
-      const query = toLower(q);
-      images.push(image);
-      return toLower(name).includes(query) || toLower(composition).includes(query);
-    });
-    const fetchedData = await Promise.all(result.map(async ({ name, image }) => {
-      const fetchedImage = await fetchImage(image);
-      return { name, image: fetchedImage };
-    }));
-    setData(fetchedData);
+    const result = items
+      .filter(({ name, composition }) => {
+        const query = toLower(q);
+        return toLower(name).includes(query) || toLower(composition).includes(query);
+      })
+      .map(({ name, image }) => ({ name, image }));
+
+    setData(result);
   };
 
   const options = (d: Data) => d.map(({ name, image }) => ({
@@ -72,7 +72,7 @@ const Search = ({ items }: { items: Item[] }) => {
       title={name}
     >
       <div className="ant-select-item-option-content d-flex align-items-center gap-2">
-        <img className="col-2" alt={name} src={image} />
+        <Image className="col-2" alt={name} src={image} />
         <span className="fs-6">{name}</span>
       </div>
     </Button>,
@@ -89,11 +89,15 @@ const Search = ({ items }: { items: Item[] }) => {
     if (urlSearch && items.length) {
       searchHandler(urlSearch);
       onSearch(urlSearch);
-    } else if (search) {
+    }
+  }, [items]);
+
+  useEffect(() => {
+    if (!urlSearch && search) {
       clearData();
       dispatch(searchUpdate(null));
     }
-  }, [items, urlSearch]);
+  }, [urlSearch]);
 
   return (
     <AutoComplete

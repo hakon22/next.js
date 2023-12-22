@@ -25,7 +25,7 @@ type FilterProps<T> = {
   filterOptions: FilterOptions,
   setFilterOptions: React.Dispatch<React.SetStateAction<FilterOptions>>,
   setShowData: React.Dispatch<React.SetStateAction<T[]>>,
-  search: T[] | null,
+  search?: T[],
   sortedItems: T[],
   currentItems: T[],
   showedItemsCount: number,
@@ -194,7 +194,7 @@ const Filters = ({
               defaultValue={rangePrice}
               disabled={isDisabled(rangePrice[0], rangePrice[1])}
               onChange={(value: number[]) => setRangePriceValues(value)}
-              onAfterChange={(value: number[]) => setFilterOptions({ sortBy, rangeCcalValue, rangePriceValue: value })}
+              onChangeComplete={(value: number[]) => setFilterOptions({ sortBy, rangeCcalValue, rangePriceValue: value })}
             />
           </div>
           <div className="text-center">
@@ -212,7 +212,7 @@ const Filters = ({
               defaultValue={rangeCcal}
               disabled={isDisabled(rangeCcal[0], rangeCcal[1])}
               onChange={(value: number[]) => setRangeCcalValues(value)}
-              onAfterChange={(value: number[]) => setFilterOptions({ sortBy, rangePriceValue, rangeCcalValue: value })}
+              onChangeComplete={(value: number[]) => setFilterOptions({ sortBy, rangePriceValue, rangeCcalValue: value })}
             />
           </div>
         </div>),
@@ -309,6 +309,10 @@ const Filters = ({
       expandIconPosition="end"
     />
   );
+};
+
+Filters.defaultProps = {
+  search: undefined,
 };
 
 export default Filters;

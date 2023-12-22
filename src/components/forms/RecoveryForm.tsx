@@ -6,12 +6,13 @@ import {
   Button, Form, FloatingLabel, Spinner, Alert,
 } from 'react-bootstrap';
 import axios from 'axios';
+import { ModalProps } from '@/types/Modal';
 import notify from '../../utilities/toast';
 import formClass from '../../utilities/formClass';
 import { emailValidation } from '../../validations/validations';
 import routes from '../../routes';
 
-const RecoveryForm = () => {
+const RecoveryForm = ({ onHide }: ModalProps) => {
   const { t } = useTranslation();
 
   const [sendMail, setSendMail] = useState('');
@@ -28,6 +29,7 @@ const RecoveryForm = () => {
         if (data.code === 1) {
           setSendMail(values.email);
           notify(t('toast.emailSuccess'), 'success');
+          onHide();
         } else if (data.code === 2) {
           setSubmitting(false);
           setFieldError('email', t('validation.userNotAlreadyExists'));

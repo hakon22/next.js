@@ -1,4 +1,4 @@
-import type { Addresses } from '../../../backend/src/types/Addresses';
+import type { Addresses } from './Addresses';
 
 export type LoadingStatus = 'idle' | 'loading' | 'finish' | 'failed';
 

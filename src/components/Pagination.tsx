@@ -1,6 +1,8 @@
+/* eslint-disable max-len */
 import { Pagination as AntdPagination } from 'antd';
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import scrollTop from '../utilities/scrollTop';
 import type { Item } from '../types/Item';
 
@@ -10,6 +12,8 @@ type PaginationProps<T> = {
   rowsPerPage: number;
   scrollRef?: React.RefObject<HTMLElement>;
 }
+
+export const paramsCheck = (value: number, lastPage: number) => (value <= lastPage && value > 0 ? value : 1);
 
 const Pagination = ({
   data, setShowData, rowsPerPage, scrollRef,
@@ -21,9 +25,7 @@ const Pagination = ({
 
   const lastPage = Math.ceil(data.length / rowsPerPage);
 
-  const paramsCheck = (value: number) => (value <= lastPage && value > 0 ? value : 1);
-
-  const pageParams: number = paramsCheck(urlPage);
+  const pageParams: number = paramsCheck(urlPage, lastPage);
   const [currentPage, setCurrentPage] = useState(pageParams);
 
   const handleClick = (page: number) => {
@@ -31,23 +33,25 @@ const Pagination = ({
     const pageIndex = page - 1;
     const firstIndex = pageIndex * rowsPerPage;
     const lastIndex = pageIndex * rowsPerPage + rowsPerPage;
-    setShowData(data.slice(firstIndex, lastIndex));
     if (urlSearch) {
-      router.push(`?q=${urlSearch}&page=${page}`);
+      router.push(`${router.pathname}?q=${urlSearch}&page=${page}`, undefined, { shallow: true });
     } else {
-      router.push(`?page=${page}`);
+      router.push(`${router.pathname}?page=${page}`, router.query.catalog
+        ? `${router.asPath}?page=${page}`
+        : `?page=${page}`, { shallow: true });
     }
+    setShowData(data.slice(firstIndex, lastIndex));
   };
 
   useEffect(() => {
-    setTimeout(() => handleClick(pageParams), 1);
+    handleClick(pageParams);
   }, [data]);
 
   useEffect(() => {
     if (scrollRef) {
       scrollRef?.current?.scrollIntoView();
     } else {
-      setTimeout(scrollTop, 100);
+      setTimeout(scrollTop, 200);
     }
   }, [currentPage]);
 

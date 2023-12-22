@@ -42,7 +42,6 @@ class Auth {
         role,
         email,
         code_activation,
-        refresh_token: [],
         addresses: {
           addressList: [],
           currentAddress: -1,

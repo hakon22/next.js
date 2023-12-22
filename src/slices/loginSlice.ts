@@ -14,14 +14,6 @@ export const fetchLogin = createAsyncThunk(
   },
 );
 
-export const fetchActivation = createAsyncThunk(
-  'login/fetchActivation',
-  async (id: string | undefined) => {
-    const response = await axios.get(`${routes.activation}${id}`);
-    return response.data;
-  },
-);
-
 export const fetchTokenStorage = createAsyncThunk(
   'login/fetchTokenStorage',
   async (refreshTokenStorage: string) => {
@@ -205,21 +197,6 @@ const loginSlice = createSlice({
         state.error = null;
       })
       .addCase(updateTokens.rejected, (state, action) => {
-        state.loadingStatus = 'failed';
-        state.error = action.error.message ?? null;
-      })
-      .addCase(fetchActivation.pending, (state) => {
-        state.loadingStatus = 'loading';
-        state.error = null;
-      })
-      .addCase(fetchActivation.fulfilled, (state, { payload }) => {
-        state.loadingStatus = 'finish';
-        state.error = null;
-        if (payload) {
-          state.email = payload;
-        }
-      })
-      .addCase(fetchActivation.rejected, (state, action) => {
         state.loadingStatus = 'failed';
         state.error = action.error.message ?? null;
       });

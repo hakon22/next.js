@@ -1,13 +1,11 @@
 import { Card as CardBootstrap, Button } from 'react-bootstrap';
 import { PlusCircle, DashCircle } from 'react-bootstrap-icons';
-import { useState, useEffect } from 'react';
-import { Rate, Tooltip, Skeleton } from 'antd';
+import { Rate, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   cartAdd, cartUpdate, cartRemove, selectors,
 } from '../slices/cartSlice';
 import { useAppDispatch, useAppSelector } from '../utilities/hooks';
-import fetchImage from '../utilities/fetchImage';
 import type { CardItemProps } from '../types/Item';
 
 const Card = ({ item }: CardItemProps) => {
@@ -17,28 +15,16 @@ const Card = ({ item }: CardItemProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
-  const [srcImage, setSrcImage] = useState('');
-  const [onLoad, setOnLoad] = useState(false);
   const countInCart = useAppSelector((state) => selectors.selectById(state, id))?.count;
 
   const setCount = (itemId: number, count: number) => (count < 1
     ? dispatch(cartRemove(itemId))
     : dispatch(cartUpdate({ id: itemId, changes: { count } })));
 
-  useEffect(() => {
-    fetchImage(image, setSrcImage);
-  }, []);
-
-  useEffect(() => {
-    if (srcImage) {
-      setOnLoad(true);
-    }
-  }, [srcImage]);
-
   return (
     <CardBootstrap className="card-item">
       <div className="card-image mx-auto">
-        {onLoad ? <CardBootstrap.Img variant="top" src={srcImage} alt={name} /> : <Skeleton.Image active className="w-100" />}
+        <CardBootstrap.Img variant="top" src={image} alt={name} />
       </div>
       <CardBootstrap.Body className="pt-0">
         <Rate disabled defaultValue={4.5} />
@@ -86,7 +72,7 @@ const Card = ({ item }: CardItemProps) => {
                 variant="success"
                 onClick={() => {
                   dispatch(cartAdd({
-                    id, name, price, discountPrice, discount, image: srcImage, unit, count: 1,
+                    id, name, price, discountPrice, discount, image, unit, count: 1,
                   }));
                 }}
               >

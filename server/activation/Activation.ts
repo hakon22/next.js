@@ -3,13 +3,13 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable camelcase */
-// import { getDigitalCode } from 'node-verification-code';
+import { getDigitalCode } from 'node-verification-code';
 import { Request, Response } from 'express';
 import Users from '../db/tables/Users.js';
 import { sendMailActivationAccount } from '../mail/sendMail.js';
 import { generateRefreshToken } from '../authentication/tokensGen.js';
 
-export const codeGen = () => Number(Math.random().toString());
+export const codeGen = () => getDigitalCode(4).toString();
 
 class Activation {
   async needsActivation(req: Request, res: Response) {
@@ -41,9 +41,9 @@ class Activation {
       });
       if (user?.code_activation) {
         const { email } = user;
-        if (user.code_activation === Number(code)) {
+        if (user.code_activation === code) {
           const refreshToken = generateRefreshToken(id, email);
-          await Users.update({ refresh_token: [refreshToken], code_activation: undefined }, { where: { id } });
+          await Users.update({ refresh_token: [refreshToken], code_activation: null }, { where: { id } });
           res.status(200).send({ code: 1, refreshToken });
         } else {
           res.status(200).send({ code: 2 });

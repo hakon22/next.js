@@ -18,7 +18,7 @@ type ChangeDataValues = {
 };
 
 type ConfirmEmailValues = {
-  code?: number;
+  code?: string;
 } & ChangeDataValues;
 
 class Profile {
@@ -34,7 +34,7 @@ class Profile {
         email, code, phone, oldPassword,
       } = values;
       if (code) {
-        if (Number(code) === change_email_code) {
+        if (code === change_email_code) {
           await Users.update({ change_email_code: undefined }, { where: { id } });
           return res.send({ code: 1 });
         }

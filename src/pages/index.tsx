@@ -4,14 +4,9 @@ import {
 } from 'react';
 import { Spinner, Button } from 'react-bootstrap';
 import { Badge, FloatButton, Result } from 'antd';
+import { toLower } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import { skipToken } from '@reduxjs/toolkit/query';
-import {
-  useGetMarketAllQuery,
-  fetchItems, selectors, getMarketAll, getRunningQueriesThunk,
-} from '../slices/marketSlice';
+import { fetchItems, marketAddMany } from '../slices/marketSlice';
 import Pagination from '../components/Pagination';
 import Card from '../components/Card';
 import { ModalContext, ScrollContext } from '../components/Context';
@@ -23,10 +18,16 @@ import Filters, { isFilter, generalSortFunction, generalFilterFunction } from '.
 import CardContextMenu from '../components/CardContextMenu';
 import type { FilterOptions } from '../components/Filters';
 import type { Item } from '../types/Item';
-import routes from '../routes';
-import wrapper from '../slices';
+import store from '../slices';
+import { fetchingItemsImage } from '../utilities/fetchImage';
 
-const Marketplace = ({ filter }: { filter?: string }) => {
+type MarketplaceProps = {
+  items: Item[];
+  filterItems?: Item[];
+  searchItems?: Item[];
+};
+
+const Marketplace = ({ items, filterItems, searchItems }: MarketplaceProps) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const { scrollBar } = useContext(ScrollContext);
@@ -35,26 +36,19 @@ const Marketplace = ({ filter }: { filter?: string }) => {
 
   const showedItemsCount: number = 8;
 
-  const items: Item[] = useAppSelector(selectors.selectAll);
-  const { loadingStatus, search } = useAppSelector((state) => state.market);
   const { role } = useAppSelector((state) => state.login);
-
-  const currentItems = useMemo(() => items.filter((i) => {
-    if (filter) {
-      return filter === 'discounts' ? !!i.discount : i.category.includes(filter);
-    }
-    return true;
-  }), [filter, search]);
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ sortBy: 'name' });
   const { sortBy, rangePriceValue, rangeCcalValue } = filterOptions;
 
+  const currentItems = useMemo(() => filterItems || items, [items, filterItems, searchItems]);
+
   const sortedItems: Item[] = useMemo(() => {
     if (isFilter(rangePriceValue, rangeCcalValue)) {
-      return search ? search.filter(generalFilterFunction(rangePriceValue, rangeCcalValue)).sort(generalSortFunction(sortBy)) : currentItems.filter(generalFilterFunction(rangePriceValue, rangeCcalValue)).sort(generalSortFunction(sortBy));
+      return searchItems ? searchItems.filter(generalFilterFunction(rangePriceValue, rangeCcalValue)).sort(generalSortFunction(sortBy)) : currentItems.filter(generalFilterFunction(rangePriceValue, rangeCcalValue)).sort(generalSortFunction(sortBy));
     }
-    return search ? [...search].sort(generalSortFunction(sortBy)) : currentItems.sort(generalSortFunction(sortBy));
-  }, [currentItems, rangePriceValue, rangeCcalValue, search, sortBy]);
+    return searchItems ? searchItems.sort(generalSortFunction(sortBy)) : currentItems.sort(generalSortFunction(sortBy));
+  }, [currentItems, rangePriceValue, rangeCcalValue, searchItems, sortBy]);
 
   const [showedData, setShowData] = useState<Item[]>(sortedItems.slice(0, showedItemsCount));
 
@@ -63,6 +57,10 @@ const Marketplace = ({ filter }: { filter?: string }) => {
       modalShow(context?.action);
     }
   }, [context?.action]);
+
+  useEffect(() => {
+    dispatch(marketAddMany(items));
+  }, []);
 
   return !items.length ? (
     <div className="position-absolute top-50 start-50">
@@ -80,9 +78,9 @@ const Marketplace = ({ filter }: { filter?: string }) => {
             filterOptions={filterOptions}
             setFilterOptions={setFilterOptions}
             setShowData={setShowData}
-            search={search}
+            search={searchItems}
             sortedItems={sortedItems}
-            currentItems={currentItems}
+            currentItems={items}
             showedItemsCount={showedItemsCount}
           />
           <div className="marketplace anim-show">
@@ -122,7 +120,27 @@ const Marketplace = ({ filter }: { filter?: string }) => {
 };
 
 Marketplace.defaultProps = {
-  filter: undefined,
+  filterItems: undefined,
+  searchItems: undefined,
+};
+
+export const getServerSideProps = async ({ query }: { query: { q: string } }) => {
+  const { q } = query;
+  const entities = Object.values(store.getState().market.entities);
+  const items = entities.length ? entities : (await store.dispatch(fetchItems())).payload.items;
+  const fetchedItems = await fetchingItemsImage<Item>(items);
+
+  const props = q
+    ? {
+      items: fetchedItems,
+      searchItems: fetchedItems.filter(({ name, composition }) => {
+        const searchQuery = toLower(q);
+        return toLower(name).includes(searchQuery) || toLower(composition).includes(searchQuery);
+      }),
+    }
+    : { items: fetchedItems };
+
+  return { props };
 };
 
 export default Marketplace;

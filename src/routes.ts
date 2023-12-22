@@ -1,21 +1,27 @@
-const apiPath = 'http://192.168.1.111:3007/marketplace/api';
+const apiPath = 'http://localhost:3007/marketplace/api';
 
 interface ApiUrl {
   [key: string]: string;
 }
 
-export const catalogPages: ApiUrl = {
+interface CatalogPages {
+  [key: string]: string | { pathname: string, query: { [key: string]: string[]} }
+}
+
+const pathname = '/catalog/[...catalog]';
+
+export const catalogPages: CatalogPages = {
   discounts: '/discounts',
   delivery: '/delivery',
-  vegetables: '/vegetables',
-  fruits: '/fruits',
-  frozen: '/frozen',
-  freshMeat: '/freshMeat',
-  dairy: '/dairy',
-  fish: '/fish',
-  sweet: '/sweet',
-  iceCream: ['/sweet', 'iceCream'].join('/'),
-  chocolate: ['/sweet', 'chocolate'].join('/'),
+  vegetables: { pathname, query: { catalog: ['vegetables'] } },
+  fruits: { pathname, query: { catalog: ['fruits'] } },
+  frozen: { pathname, query: { catalog: ['frozen'] } },
+  freshMeat: { pathname, query: { catalog: ['freshMeat'] } },
+  dairy: { pathname, query: { catalog: ['dairy'] } },
+  fish: { pathname, query: { catalog: ['fish'] } },
+  sweet: { pathname, query: { catalog: ['sweet'] } },
+  iceCream: { pathname, query: { catalog: ['sweet', 'iceCream'] } },
+  chocolate: { pathname, query: { catalog: ['sweet', 'chocolate'] } },
 };
 
 export default {

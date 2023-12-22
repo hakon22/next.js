@@ -156,7 +156,7 @@ export const ModalRecovery = ({ onHide, show }: ModalProps) => {
         <Modal.Title className="text-center w-100">{t('recoveryForm.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <RecoveryForm />
+        <RecoveryForm onHide={onHide} />
       </Modal.Body>
       <Modal.Footer>
         <span>{t('recoveryForm.rememberPassword')}</span>
@@ -226,7 +226,7 @@ export const ModalSignup = ({ onHide, show }: ModalProps) => {
         <Modal.Title className="text-center w-100">{t('signupForm.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <SignupForm />
+        <SignupForm onHide={onHide} />
       </Modal.Body>
       <Modal.Footer>
         <span>{t('signupForm.haveAccount')}</span>

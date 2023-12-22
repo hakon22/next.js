@@ -19,14 +19,14 @@ import formClass from '../../utilities/formClass';
 import pineapple from '../../images/pineapple.svg';
 import routes from '../../routes';
 
-const ActivationForm = ({ id }: { id: string | undefined }) => {
+const ActivationForm = ({ id, email }: { id: string, email: string }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const isMobile = useContext(MobileContext);
+  const changedEmail = useAppSelector((state) => state.login).email;
   const { show, modalShow } = useContext(ModalContext);
 
-  const { email } = useAppSelector((state) => state.login);
   const [timer, setTimer] = useState<number>(59);
 
   const repeatEmail = async () => {
@@ -90,7 +90,7 @@ const ActivationForm = ({ id }: { id: string | undefined }) => {
           'w-50 h-50 mb-2 mt-3': isMobile,
           'me-2 mb-4': !isMobile,
         })}
-        src={pineapple}
+        src={pineapple.src}
         alt={t('loginForm.title')}
         roundedCircle
       />
@@ -107,7 +107,7 @@ const ActivationForm = ({ id }: { id: string | undefined }) => {
           size="sm"
           variant="warning"
           className="mt-1 mb-1"
-          title={email ?? ''}
+          title={changedEmail || email}
         >
           <Dropdown.Item eventKey="1" onClick={() => modalShow('activation')}>{t('activationForm.dropMenuChange')}</Dropdown.Item>
         </DropdownButton>
