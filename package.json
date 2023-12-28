@@ -5,10 +5,9 @@
   "proxy": "http://0.0.0.0:3007",
   "type": "module",
   "scripts": {
-    "server": "cross-env DB='LOCAL' ts-node --project tsconfig.server.json server/server.ts",
-    "dev": "next dev",
+    "start": "cross-env DB='LOCAL' NODE_ENV=production ts-node --project tsconfig.server.json server/server.ts",
+    "dev": "cross-env DB='LOCAL' ts-node --project tsconfig.server.json server/server.ts",
     "build": "next build",
-    "start": "next start",
     "lint": "next lint"
   },
   "homepage": "marketplace",
@@ -33,7 +32,6 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "next": "14.0.4",
-    "next-redux-wrapper": "^8.1.0",
     "node-verification-code": "^1.1.5",
     "nodemailer": "^6.9.7",
     "passport": "^0.7.0",

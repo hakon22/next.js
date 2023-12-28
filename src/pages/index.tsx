@@ -2,6 +2,7 @@
 import {
   useEffect, useState, useMemo, useContext,
 } from 'react';
+import type { GetServerSideProps } from 'next';
 import { Spinner, Button } from 'react-bootstrap';
 import { Badge, FloatButton, Result } from 'antd';
 import { toLower } from 'lodash';
@@ -80,7 +81,7 @@ const Marketplace = ({ items, filterItems, searchItems }: MarketplaceProps) => {
             setShowData={setShowData}
             search={searchItems}
             sortedItems={sortedItems}
-            currentItems={items}
+            currentItems={currentItems}
             showedItemsCount={showedItemsCount}
           />
           <div className="marketplace anim-show">
@@ -124,13 +125,12 @@ Marketplace.defaultProps = {
   searchItems: undefined,
 };
 
-export const getServerSideProps = async ({ query }: { query: { q: string } }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { q } = query;
-  const entities = Object.values(store.getState().market.entities);
-  const items = entities.length ? entities : (await store.dispatch(fetchItems())).payload.items;
+  const items = await (await store.dispatch(fetchItems())).payload.items;
   const fetchedItems = await fetchingItemsImage<Item>(items);
 
-  const props = q
+  const props = q && !Array.isArray(q)
     ? {
       items: fetchedItems,
       searchItems: fetchedItems.filter(({ name, composition }) => {

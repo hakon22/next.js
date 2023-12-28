@@ -7,8 +7,7 @@ import type { Item } from '@/types/Item';
 import Marketplace from './index';
 
 export const getServerSideProps = async () => {
-  const entities = Object.values(store.getState().market.entities);
-  const items = entities.length ? entities : (await store.dispatch(fetchItems())).payload.items;
+  const items = await (await store.dispatch(fetchItems())).payload.items;
   const fetchedItems = await fetchingItemsImage<Item>(items);
 
   return {

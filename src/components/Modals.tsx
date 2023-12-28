@@ -6,6 +6,7 @@ import {
   PlusCircle, DashCircle, XCircle, Check2Circle,
 } from 'react-bootstrap-icons';
 import { useRouter } from 'next/navigation';
+import { useRouter as useNextRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import { Badge, Tooltip } from 'antd';
@@ -18,7 +19,7 @@ import { changeEmailActivation } from '../slices/loginSlice';
 import {
   cartUpdate, cartRemove, cartRemoveAll, selectors,
 } from '../slices/cartSlice';
-import { marketRemove } from '../slices/marketSlice';
+import { marketRemove, selectors as marketSelectors } from '../slices/marketSlice';
 import notify from '../utilities/toast';
 import { MobileContext, ScrollContext } from './Context';
 import { emailValidation } from '../validations/validations';
@@ -419,9 +420,11 @@ export const ModalRemoveItem = ({
 }: ModalRemoveItemProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const router = useNextRouter();
 
   const id = context?.id ?? 0;
 
+  const item = useAppSelector((state) => marketSelectors.selectById(state, id));
   const itemInCart = useAppSelector((state) => selectors.selectById(state, id));
 
   const { setMarginScroll } = useContext(ScrollContext);
@@ -433,6 +436,7 @@ export const ModalRemoveItem = ({
       try {
         const { data } = await axios.delete(routes.removeItem, {
           params: { id },
+          data: { image: item.image },
           headers: { Authorization: `Bearer ${token}` },
         });
         if (data.code === 1) {
@@ -443,6 +447,7 @@ export const ModalRemoveItem = ({
           onHide();
           setContext(undefined);
           notify(t('toast.removeItemSuccess'), 'success');
+          router.replace(router.asPath);
         } else if (data.code === 2) {
           onHide();
           setContext(undefined);

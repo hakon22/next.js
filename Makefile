@@ -1,8 +1,11 @@
 install:
 	npm ci
 
-start-local:
-	npm run server
+start:
+	pm2 start "npm run start" -n marketplace-next
 
-start-frontend:
+start-local:
 	npm run dev
+
+build:
+	npm run build

@@ -37,7 +37,7 @@ const Pagination = ({
       router.push(`${router.pathname}?q=${urlSearch}&page=${page}`, undefined, { shallow: true });
     } else {
       router.push(`${router.pathname}?page=${page}`, router.query.catalog
-        ? `${router.asPath}?page=${page}`
+        ? `${router.asPath}${urlPage ? '' : `?page=${page}`}`
         : `?page=${page}`, { shallow: true });
     }
     setShowData(data.slice(firstIndex, lastIndex));

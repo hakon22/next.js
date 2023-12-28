@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import axios from 'axios';
 import { Card } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';

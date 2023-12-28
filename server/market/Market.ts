@@ -10,10 +10,16 @@ import { Op } from 'sequelize';
 import { unlink } from 'fs';
 import sharp from 'sharp';
 import type { PassportRequest } from '../db/tables/Users.js';
-import { uploadFilesPath } from '../server.js';
+import { uploadFilesPath, removeFilesPath } from '../server.js';
 import Items_Table from '../db/tables/Items.js';
 
 const isAdmin = (role: string) => role === 'admin';
+
+const removeFile = (pathName: string, fileName: string) => unlink(path.resolve(pathName, fileName), (e) => {
+  if (e) {
+    throw e;
+  }
+});
 
 class Market {
   async getAll(req: Request, res: Response) {
@@ -34,16 +40,24 @@ class Market {
           return res.status(500);
         }
         if (!Array.isArray(req.files.image)) {
+          const {
+            foodValues, category, name, ...rest
+          } = req.body;
+
+          const isItemExists = await Items_Table.findOne({ where: { name } });
+          if (isItemExists) {
+            return res.send({ code: 2 });
+          }
+
           const { image } = req.files;
           const imageName = `${Date.now()}-${image.name.replace(/[^\w\s.]/g, '').replaceAll(' ', '')}`;
           await sharp(image.data).png({ compressionLevel: 9, quality: 70 }).toFile(path.resolve(uploadFilesPath, imageName));
-
-          const { foodValues, category, ...rest } = req.body;
 
           const item = await Items_Table.create({
             image: imageName,
             category: JSON.parse(category),
             foodValues: JSON.parse(foodValues),
+            name,
             ...rest,
           });
           res.send({ code: 1, item });
@@ -92,11 +106,8 @@ class Market {
           const imageName = `${Date.now()}-${image.name.replace(/[^\w\s.]/g, '').replaceAll(' ', '')}`;
           await sharp(image.data).png({ compressionLevel: 9, quality: 70 }).toFile(path.resolve(uploadFilesPath, imageName));
 
-          unlink(path.resolve(uploadFilesPath, oldImage), (e) => {
-            if (e) {
-              throw e;
-            }
-          });
+          removeFile(removeFilesPath, oldImage.split('/').pop());
+          removeFile(uploadFilesPath, item[0].image);
 
           await Items_Table.update(
             {
@@ -134,12 +145,9 @@ class Market {
         const id = Number(req.query.id);
         const item = await Items_Table.findOne({ where: { id } });
         if (item) {
+          removeFile(uploadFilesPath, item.image);
+          removeFile(removeFilesPath, req.body.image.split('/').pop());
           await Items_Table.destroy({ where: { id } });
-          unlink(path.resolve(uploadFilesPath, item.image), (e) => {
-            if (e) {
-              throw e;
-            }
-          });
           return res.send({ code: 1 });
         }
         res.send({ code: 2 });

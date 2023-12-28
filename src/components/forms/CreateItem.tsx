@@ -13,7 +13,9 @@ import {
   Upload, Tooltip, UploadFile, Cascader,
 } from 'antd';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { SingleValueType } from 'rc-cascader/lib/Cascader';
+import fetchImage from '@/utilities/fetchImage';
 import notify from '../../utilities/toast';
 import { marketAdd, marketUpdate, selectors } from '../../slices/marketSlice';
 import { useAppDispatch, useAppSelector } from '../../utilities/hooks';
@@ -36,6 +38,7 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const isMobile = useContext(MobileContext);
+  const router = useRouter();
 
   const item = useAppSelector((state) => selectors.selectById(state, id || 0));
 
@@ -135,29 +138,33 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
         if (data.code === 1) {
           if (id && setContext) {
             const {
-              price, discountPrice, count, discount,
+              price, discountPrice, count, discount, image,
             } = data.item;
-            dispatch(marketUpdate({
+            setTimeout(async () => dispatch(marketUpdate({
               id,
               changes: {
                 ...data.item,
-                id,
+                image: await fetchImage(image),
                 price: Number(price),
                 discountPrice: Number(discountPrice),
                 count: Number(count),
                 discount: Number(discount),
               },
-            }));
+            })), 2000);
             setContext(undefined);
             notify(t('toast.editItemSuccess'), 'success');
           } else {
-            dispatch(marketAdd(data.item));
+            setTimeout(async () => dispatch(marketAdd({
+              ...data.item,
+              image: await fetchImage(data.item.image),
+            })), 2000);
             setFieldValue('image', '');
             setFieldValue('category', []);
             setFileList([]);
             resetForm();
             notify(t('toast.createItemSuccess'), 'success');
           }
+          router.replace(router.asPath);
         } else if (data.code === 2) {
           setFieldError('name', t('validation.itemNameAlreadyExists'));
           setSubmitting(false);
