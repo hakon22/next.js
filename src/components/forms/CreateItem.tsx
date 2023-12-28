@@ -123,7 +123,6 @@ const CreateItem = ({ id, setContext }: { id?: number, setContext?: SetContext }
           foodValues: JSON.stringify(foodValues),
           category: JSON.stringify(category),
           id,
-          oldImage: item.image,
           ...rest,
         } : {
           foodValues: JSON.stringify(foodValues),

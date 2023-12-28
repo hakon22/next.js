@@ -36,7 +36,8 @@ app.prepare().then(() => {
   server.listen(port, () => console.log(`Server is online on port: ${port}`));
 });
 
-export const uploadFilesPath = join(__dirname, '..', 'src', 'images', 'market');
-export const removeFilesPath = join(__dirname, '..', '.next', 'static', 'media');
+export const uploadFilesPath = process.env.NODE_ENV === 'development'
+  ? join(__dirname, '..', 'src', 'images', 'market')
+  : join(__dirname, '..', '.next', 'static', 'media');
 
 connectToDb();

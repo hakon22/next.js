@@ -10,7 +10,7 @@ import { Op } from 'sequelize';
 import { unlink } from 'fs';
 import sharp from 'sharp';
 import type { PassportRequest } from '../db/tables/Users.js';
-import { uploadFilesPath, removeFilesPath } from '../server.js';
+import { uploadFilesPath } from '../server.js';
 import Items_Table from '../db/tables/Items.js';
 
 const isAdmin = (role: string) => role === 'admin';
@@ -76,7 +76,7 @@ class Market {
       const { dataValues: { role } } = req.user as PassportRequest;
       if (isAdmin(role)) {
         const {
-          id, name, oldImage, foodValues, category, ...rest
+          id, name, foodValues, category, ...rest
         } = req.body;
         const item = await Items_Table.findAll({ where: { [Op.or]: [{ id }, { name }] } });
         if (item.length > 1) {
@@ -106,7 +106,6 @@ class Market {
           const imageName = `${Date.now()}-${image.name.replace(/[^\w\s.]/g, '').replaceAll(' ', '')}`;
           await sharp(image.data).png({ compressionLevel: 9, quality: 70 }).toFile(path.resolve(uploadFilesPath, imageName));
 
-          removeFile(removeFilesPath, oldImage.split('/').pop());
           removeFile(uploadFilesPath, item[0].image);
 
           await Items_Table.update(
@@ -146,7 +145,7 @@ class Market {
         const item = await Items_Table.findOne({ where: { id } });
         if (item) {
           removeFile(uploadFilesPath, item.image);
-          removeFile(removeFilesPath, req.body.image.split('/').pop());
+
           await Items_Table.destroy({ where: { id } });
           return res.send({ code: 1 });
         }

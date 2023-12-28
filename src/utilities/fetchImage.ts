@@ -1,6 +1,9 @@
 const fetchImage = async (img: string, setState?: React.Dispatch<React.SetStateAction<string>>) => {
-  const response = await import(`../images/market/${img}`);
-  return setState ? setState(response.default.src) : response.default.src;
+  if (process.env.NODE_ENV === 'development') {
+    const response = await import(`../images/market/${img}`);
+    return setState ? setState(response.default.src) : response.default.src;
+  }
+  return setState ? setState(`/marketplace/_next/static/media/${img}`) : `/marketplace/_next/static/media/${img}`;
 };
 
 export const fetchingItemsImage = async <T extends { image: string }> (items: T[]) => {
