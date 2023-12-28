@@ -2,10 +2,10 @@
   "name": "marketplace",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://0.0.0.0:3007",
   "type": "module",
   "scripts": {
-    "start": "cross-env DB='LOCAL' NODE_ENV=production ts-node --project tsconfig.server.json server/server.ts",
+    "start": "cross-env DB='HOST' NODE_ENV=production ts-node --project tsconfig.server.json server/server.ts",
+    "dev-prod": "cross-env DB='LOCAL' NODE_ENV=production ts-node --project tsconfig.server.json server/server.ts",
     "dev": "cross-env DB='LOCAL' ts-node --project tsconfig.server.json server/server.ts",
     "build": "next build",
     "lint": "next lint"

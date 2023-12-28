@@ -1,10 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { AppProps, AppContext } from 'next/app';
+import Head from 'next/head';
 import App from 'next/app';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
+import favicon from '../images/favicon.ico';
 import store from '../slices/index';
 import General from '../components/App';
 import '../scss/app.scss';
@@ -35,6 +37,9 @@ const init = (props: InitProps) => {
   return (
     <I18nextProvider i18n={i18n}>
       <Provider store={store}>
+        <Head>
+          <link rel="shortcut icon" href={favicon.src} />
+        </Head>
         <ToastContainer />
         <General isMob={props.isMob}>
           <Component {...pageProps} />

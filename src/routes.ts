@@ -1,4 +1,4 @@
-const apiPath = 'http://localhost:3007/marketplace/api';
+const apiPath = '/marketplace/api';
 
 interface ApiUrl {
   [key: string]: string;

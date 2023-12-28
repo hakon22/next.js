@@ -10,7 +10,7 @@ import routes from '../routes';
 export const fetchItems = createAsyncThunk(
   'market/fetchItems',
   async () => {
-    const response = await axios.get(routes.getAllItems);
+    const response = await axios.get(`http://localhost:3007${routes.getAllItems}`);
     return response.data;
   },
 );
