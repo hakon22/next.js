@@ -49,7 +49,7 @@ const Card = ({ item }: CardItemProps) => {
         <div className="d-flex justify-content-center min-height-38">
           {countInCart
             ? (
-              <div className="d-flex justify-content-center align-items-center gap-4">
+              <div className="d-flex justify-content-center align-items-center gap-4" style={discount ? { position: 'relative', top: '3px' } : {}}>
                 <DashCircle
                   className="fs-3 text-success icon-hover animate__animated animate__fadeInLeft"
                   role="button"
@@ -70,6 +70,7 @@ const Card = ({ item }: CardItemProps) => {
             : (
               <Button
                 variant="success"
+                style={discount ? { position: 'relative', top: '3px' } : {}}
                 onClick={() => {
                   dispatch(cartAdd({
                     id, name, price, discountPrice, discount, image, unit, count: 1,

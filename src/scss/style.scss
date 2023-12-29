@@ -19,6 +19,13 @@ body {
 
 .navbar {
   background-color: #fcf5df;
+
+  .profile {
+
+    .dropdown-menu.show {
+      left: -100%;
+    }
+  }
 }
 
 .btn > svg {
@@ -122,6 +129,10 @@ body {
   gap: 1.5em;
   grid-template-columns: repeat(4, 1fr);
 
+  .ant-ribbon-wrapper {
+    height: 100%;
+  }
+
   .ant-upload-list-picture-card {
 
     .ant-upload.ant-upload-select {
@@ -146,6 +157,7 @@ body {
 
 .card-item {
   background-color: #fffbf9;
+  height: 100%;
 
   .card-image {
     width: 80%;
@@ -244,8 +256,47 @@ body {
 
 @media (max-width: 767px) {
 
+  .profile {
+    position: static;
+
+    .dropdown-menu.show {
+      right: 0.7rem;
+      left: unset !important;
+      top: 3.3rem;
+    }
+  }
+
   .marketplace {
-    grid-template-columns: repeat(1, 1fr);
+    gap: 0.8rem;
+    justify-content: space-between;
+    grid-template-columns: repeat(2, 48%);
+
+    .card-body {
+      padding-left: 0.3rem !important;
+      padding-right: 0.3rem !important;
+
+      .card-subtitle {
+        font-size: 0.7rem !important;
+      }
+
+      .card-title {
+        font-size: 1rem;
+      }
+
+      .price > .discount {
+        font-size: 0.8rem !important;
+
+        ~ span {
+          font-size: 1.1rem !important;
+        }
+      }
+
+      .card-text {
+        span.fs-4 {
+          font-size: 1.1rem !important;
+        }
+      }
+    }
 
     .input-group-sm > .form-select {
       padding-right: 0;

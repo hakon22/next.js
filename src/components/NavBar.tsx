@@ -66,7 +66,7 @@ const NavBar = () => {
         <Navbar.Text className="me-md-5 col-md-2">
           <Link className="navbar-brand" href={routes.homePage}>{t('navBar.title')}</Link>
         </Navbar.Text>
-        {isMobile && <ProfileButton className="ms-5" />}
+        {isMobile && <ProfileButton className="ms-5 profile" />}
         <Navbar.Toggle>
           <span />
           <span />
@@ -84,7 +84,7 @@ const NavBar = () => {
         <Navbar.Collapse className="justify-content-start col-md-3">
           <Search items={itemsMarket} />
         </Navbar.Collapse>
-        {!isMobile && <ProfileButton className="d-flex justify-content-end" />}
+        {!isMobile && <ProfileButton className="d-flex justify-content-end profile" />}
       </Container>
     </Navbar>
   );

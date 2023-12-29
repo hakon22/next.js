@@ -72,7 +72,7 @@ const Marketplace = ({ items, filterItems, searchItems }: MarketplaceProps) => {
       <ModalCreateItem onHide={modalClose} context={context} setContext={setContext} />
       <ModalRemoveItem show={show} onHide={modalClose} context={context} setContext={setContext} />
       <Breadcrumb />
-      <div className="my-4 row d-flex justify-content-end">
+      <div className="my-4 row justify-content-end">
         <div className="col-12 col-md-9 col-xl-10 my-4">
           <Cart />
           <Filters

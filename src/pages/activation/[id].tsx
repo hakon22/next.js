@@ -7,7 +7,7 @@ import Helmet from '../../components/Helmet';
 
 export const getServerSideProps = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const { data } = await axios.get(`${routes.activation}${id}`);
+  const { data } = await axios.get(`http://localhost:3007${routes.activation}${id}`);
 
   return data
     ? { props: { id, email: data } }

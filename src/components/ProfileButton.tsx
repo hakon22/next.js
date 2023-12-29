@@ -22,7 +22,6 @@ const ProfileButton = ({ className }: { className?: string }) => {
     <NavDropdown
       title={<Avatar size="large" className="fs-4">{username?.[0] || <UserOutlined />}</Avatar>}
       className={className}
-      align="end"
     >
       {loggedIn ? (
         <>
