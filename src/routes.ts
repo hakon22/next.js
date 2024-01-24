@@ -34,6 +34,7 @@ export default {
   notFoundPage: '*',
   login: [apiPath, 'auth', 'login'].join('/'),
   signup: [apiPath, 'auth', 'signup'].join('/'),
+  googleAuth: [apiPath, 'auth', 'google'].join('/'),
   activation: [apiPath, 'activation/'].join('/'),
   activationRepeatEmail: [apiPath, 'activation', 'repeatEmail/'].join('/'),
   activationChangeEmail: [apiPath, 'activation', 'changeEmail'].join('/'),

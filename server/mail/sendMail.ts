@@ -108,3 +108,30 @@ export const sendMailRecoveryPass: RecoveryPassword = async (username, email, pa
     }
   });
 };
+
+export const sendMailGoogleAuth: RecoveryPassword = async (username, email, password) => {
+  const to = lowerCase(email);
+  const subject = `Регистрация нового аккаунта на ${siteName}`;
+
+  await transport.sendMail({
+    from: process.env.LOGIN,
+    to,
+    subject,
+    html: `
+      <h3>Уважаемый ${upperCase(username)}!</h3>
+      <h4>Вы зарегистрировали новый аккаунт, выполнив вход через аккаунт Google.</h4>
+      <p>Ваш пароль: <h3><b>${password}</b></h3></p>
+      <p>
+        Для входа в аккаунт с помощью пароля, пожалуйста, укажите Ваш номер телефона
+        в личном кабинете: <a href="${protocol}${siteName}/profile" target="_blank">${siteName}/profile</a>
+      </p>
+      <p>С уважением, администрация <a href="${protocol}${siteName}" target="_blank">${siteName}</a></p>
+    `,
+  }, (error) => {
+    if (error) {
+      console.error('Ошибка при отправке:', error);
+    } else {
+      console.log('Сообщение отправлено!');
+    }
+  });
+};

@@ -111,6 +111,15 @@ const loginSlice = createSlice({
         });
       }
     },
+    googleAuth: (state, { payload }
+      : PayloadAction<{ code: number, user: User }>) => {
+      if (payload.code === 1) {
+        const entries = Object.entries(payload.user);
+        entries.forEach(([key, value]) => { state[key] = value; });
+      }
+      state.loadingStatus = 'finish';
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -209,6 +218,7 @@ export const {
   changeUserData,
   addAddress,
   updateAddress,
+  googleAuth,
 } = loginSlice.actions;
 
 export default loginSlice.reducer;

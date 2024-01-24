@@ -6,12 +6,19 @@ import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 import { Request, Response } from 'express';
 import passGen from 'generate-password';
+import { jwtDecode } from 'jwt-decode';
 import { codeGen } from '../activation/Activation.js';
 import Users, { PassportRequest } from '../db/tables/Users.js';
-import { sendMailActivationAccount, sendMailRecoveryPass } from '../mail/sendMail.js';
+import { sendMailActivationAccount, sendMailRecoveryPass, sendMailGoogleAuth } from '../mail/sendMail.js';
 import { generateAccessToken, generateRefreshToken } from './tokensGen.js';
 
 const adminEmail = ['hakon1@mail.ru'];
+
+type DecodeToken = {
+  email: string;
+  given_name: string;
+  family_name: string;
+};
 
 class Auth {
   async signup(req: Request, res: Response) {
@@ -175,6 +182,69 @@ class Auth {
       await Users.update({ password: hashPassword }, { where: { email } });
       await sendMailRecoveryPass(username, email, password);
       res.status(200).json({ code: 1 });
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(500);
+    }
+  }
+
+  async googleAuth(req: Request, res: Response) {
+    try {
+      const googleToken = req.headers.authorization;
+      const decodeToken: DecodeToken = jwtDecode(googleToken ?? '');
+      const { email, given_name, family_name } = decodeToken;
+      const candidate = await Users.findOne({ where: { email } });
+      if (candidate && candidate.refresh_token) {
+        const token = generateAccessToken(candidate.id ?? 0, email);
+        const refreshToken = generateRefreshToken(candidate.id ?? 0, email);
+        if (candidate.refresh_token.length < 4) {
+          candidate.refresh_token.push(refreshToken);
+          await Users.update({ refresh_token: candidate.refresh_token }, { where: { email } });
+        } else {
+          await Users.update({ refresh_token: [refreshToken] }, { where: { email } });
+        }
+        const {
+          id, username, phone, role, addresses, orders,
+        } = candidate;
+        res.status(200).send({
+          code: 1,
+          user: {
+            token, refreshToken, username, role, id, email, phone, addresses, orders,
+          },
+        });
+      } else {
+        const role = adminEmail.includes(email) ? 'admin' : 'member';
+        const password = passGen.generate({
+          length: 7,
+          numbers: true,
+        });
+        const hashPassword = bcrypt.hashSync(password, 10);
+        const user = await Users.create({
+          username: `${given_name} ${family_name}`,
+          phone: email,
+          password: hashPassword,
+          role,
+          email,
+          addresses: {
+            addressList: [],
+            currentAddress: -1,
+          },
+          orders: [],
+        });
+        const {
+          id, username, phone, addresses, orders,
+        } = user;
+        const token = generateAccessToken(id ?? 0, email);
+        const refreshToken = generateRefreshToken(id ?? 0, email);
+        await Users.update({ refresh_token: [refreshToken] }, { where: { email } });
+        await sendMailGoogleAuth(username, email, password);
+        res.status(200).send({
+          code: 1,
+          user: {
+            token, refreshToken, username, role, id, email, phone, addresses, orders,
+          },
+        });
+      }
     } catch (e) {
       console.log(e);
       res.sendStatus(500);

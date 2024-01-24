@@ -28,6 +28,14 @@ body {
   }
 }
 
+.google-button iframe {
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  margin-right: -50% !important;
+  top: 1rem !important;
+}
+
 .btn > svg {
   vertical-align: -.125em;
   margin-right: 0.2em;

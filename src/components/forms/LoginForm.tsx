@@ -2,10 +2,15 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useContext } from 'react';
 import InputMask from 'react-input-mask';
+import axios from 'axios';
+import { GoogleLogin } from '@react-oauth/google';
 import {
   Button, Form, FloatingLabel, Alert, Spinner,
 } from 'react-bootstrap';
-import { fetchLogin } from '../../slices/loginSlice';
+import routes from '@/routes';
+import { User } from '@/types/User';
+import notify from '@/utilities/toast';
+import { fetchLogin, googleAuth } from '../../slices/loginSlice';
 import AuthContext from '../Context';
 import { loginValidation } from '../../validations/validations';
 import { useAppDispatch } from '../../utilities/hooks';
@@ -115,7 +120,7 @@ const LoginForm = ({ onHide }: ModalProps) => {
             {t('loginForm.forgotPassword')}
           </Alert.Link>
         </Form.Group>
-        <Button variant="warning" className="w-100" type="submit" disabled={formik.isSubmitting}>
+        <Button variant="warning" className="w-100 mb-2" type="submit" disabled={formik.isSubmitting}>
           {formik.isSubmitting ? (
             <Spinner
               as="span"
@@ -126,6 +131,29 @@ const LoginForm = ({ onHide }: ModalProps) => {
             />
           ) : t('loginForm.submit')}
         </Button>
+        <div className="google-button">
+          <GoogleLogin
+            onSuccess={async ({ credential }) => {
+              const res: { data: { code: number, user: User } } = await axios.get(
+                routes.googleAuth,
+                {
+                  headers: {
+                    Authorization: credential,
+                  },
+                },
+              );
+              dispatch(googleAuth(res.data));
+              window.localStorage.setItem('refresh_token', res.data.user.refreshToken);
+              onHide();
+            }}
+            size="medium"
+            logo_alignment="center"
+            onError={() => {
+              console.log('Login Failed');
+              notify(t('toast.unknownError'), 'error');
+            }}
+          />
+        </div>
       </Form>
     </div>
   );

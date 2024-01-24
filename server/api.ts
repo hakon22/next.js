@@ -14,6 +14,7 @@ const jwtToken = passport.authenticate('jwt', { session: false });
 
 router.post(`${apiPath}/auth/signup`, Auth.signup);
 router.post(`${apiPath}/auth/login`, Auth.login);
+router.get(`${apiPath}/auth/google`, Auth.googleAuth);
 router.post(`${apiPath}/auth/recoveryPassword`, Auth.recoveryPassword);
 router.post(`${apiPath}/auth/logout`, Auth.logout);
 router.get(`${apiPath}/auth/updateTokens`, passport.authenticate('jwt-refresh', { session: false }), Auth.updateTokens);

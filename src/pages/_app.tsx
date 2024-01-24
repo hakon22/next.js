@@ -3,6 +3,7 @@ import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import App from 'next/app';
 import i18next from 'i18next';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
@@ -35,17 +36,19 @@ const init = (props: InitProps) => {
   const { pageProps, Component } = props;
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <Provider store={store}>
-        <Head>
-          <link rel="shortcut icon" href={favicon.src} />
-        </Head>
-        <ToastContainer />
-        <General isMob={props.isMob}>
-          <Component {...pageProps} />
-        </General>
-      </Provider>
-    </I18nextProvider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID ?? ''}>
+      <I18nextProvider i18n={i18n}>
+        <Provider store={store}>
+          <Head>
+            <link rel="shortcut icon" href={favicon.src} />
+          </Head>
+          <ToastContainer />
+          <General isMob={props.isMob}>
+            <Component {...pageProps} />
+          </General>
+        </Provider>
+      </I18nextProvider>
+    </GoogleOAuthProvider>
   );
 };
 
