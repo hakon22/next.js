@@ -194,10 +194,10 @@ class Auth {
       const decodeToken: DecodeToken = jwtDecode(googleToken ?? '');
       const { email, given_name, family_name } = decodeToken;
       const candidate = await Users.findOne({ where: { email } });
-      if (candidate && candidate.refresh_token) {
+      if (candidate) {
         const token = generateAccessToken(candidate.id ?? 0, email);
         const refreshToken = generateRefreshToken(candidate.id ?? 0, email);
-        if (candidate.refresh_token.length < 4) {
+        if (candidate.refresh_token && candidate.refresh_token.length < 4) {
           candidate.refresh_token.push(refreshToken);
           await Users.update({ refresh_token: candidate.refresh_token }, { where: { email } });
         } else {
