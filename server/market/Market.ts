@@ -9,6 +9,7 @@ import path from 'path';
 import { Op } from 'sequelize';
 import { unlink } from 'fs';
 import sharp from 'sharp';
+import redis from '../db/redis.js';
 import type { PassportRequest } from '../db/tables/Users.js';
 import { uploadFilesPath } from '../server.js';
 import Items_Table from '../db/tables/Items.js';
@@ -24,8 +25,15 @@ const removeFile = (pathName: string, fileName: string) => unlink(path.resolve(p
 class Market {
   async getAll(req: Request, res: Response) {
     try {
-      const items = await Items_Table.findAll();
-      res.json({ code: 1, items });
+      const cacheData = await redis.get('market');
+      if (cacheData) {
+        const items = JSON.parse(cacheData);
+        res.json({ code: 1, items });
+      } else {
+        const items = await Items_Table.findAll();
+        await redis.set('market', JSON.stringify(items), { EX: 60, NX: true });
+        res.json({ code: 1, items });
+      }
     } catch (e) {
       console.log(e);
       res.sendStatus(401);
